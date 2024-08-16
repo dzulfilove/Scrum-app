@@ -28,7 +28,7 @@ export default function ModalAddPelaksana(props) {
     try {
       const response = await axios({
         method: "GET",
-        url: `http://202.157.189.177:8080/api/database/rows/table/577/${props.idPbi}/?user_field_names=true`,
+        url: `http://202.157.189.177:8080/api/database/rows/table/575/${props.idSprint}/?user_field_names=true`,
         headers: {
           Authorization: "Token wFcCXiNy1euYho73dBGwkPhjjTdODzv6",
         },
@@ -226,7 +226,7 @@ export default function ModalAddPelaksana(props) {
                       as="h3"
                       className="text-xl font-semibold leading-6 text-white w-[95%]  py-3 mt-8 rounded-xl bg-blue-600 "
                     >
-                      Tambah Data Dod Sprint
+                      Tambah Pelaksana Dodt
                     </DialogTitle>
                   </div>
                   <div className=" px-4">

@@ -401,8 +401,8 @@ function TableSprint(props) {
           <div className="font-medium">Aksi</div>
         </div>
         <motion.div
-          initial={{ y: 1000 }}
-          animate={{ y: 0 }}
+          initial={{ y: 1000, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
           transition={{ type: "spring", duration: 2, delay: 0.3 }}
         >
           <AnimatePresence>

@@ -65,17 +65,6 @@ function TablePBISprint(props) {
     setSelectedId(null);
     setSelectedData(null);
   };
-  const handleSearch = (e) => {
-    const value = e.target.value;
-    setSearch(value);
-
-    const results = props.data.filter((item) =>
-      item.Judul.toLowerCase().includes(value.toLowerCase())
-    );
-    setFilteredData(results);
-    setCurrentPage(1); // Reset halaman ke 1 setelah pencarian
-  };
-
   const handleDelete = async (id) => {
     try {
       const result = await Swal.fire({
@@ -272,10 +261,6 @@ function TablePBISprint(props) {
       }
     }
   };
-  const truncateText = (text) => {
-    if (!text) return ""; // Menghindari error jika text kosong atau null
-    return text.length > 20 ? text.substring(0, 20) + "..." : text;
-  };
   const openAnggota = () => {
     setIsAddAnggota(true);
   };
@@ -283,12 +268,12 @@ function TablePBISprint(props) {
     <div
       data-aos="fade-down"
       data-aos-delay="450"
-      className="  w-full rounded-xl  mb-16 mt-10"
+      className="  w-full rounded-xl  mb-16 mt-5"
     >
       {isOpen == false && (
         <>
           <div className="w-full flex justify-between items-center rounded-xl bg-white py-2 px-5 shadow-md gap-6">
-            <div className="flex justify-start items-center gap-10">
+            <div className="flex justify-start items-center gap-10 w-[25rem]">
               <div class="input-wrapper">
                 <input
                   type="text"
@@ -297,17 +282,15 @@ function TablePBISprint(props) {
                   class="input"
                 />
               </div>
-              <div className="w-auto flex z-[999] justify-start gap-3 items-center p-1 border border-blue-600 rounded-xl">
-                <div className="flex items-center justify-center z-[999] w-[12rem]">
-                  {/* <DropdownSearch
-                options={props.optionTim}
-                change={(item) => {}}
-                name={"Tim"}
-                isSearch={false}
-              /> */}
-                </div>
-              </div>
             </div>
+            <button
+              className="button-insert w-[15rem]"
+              onClick={() => {
+                openAnggota();
+              }}
+            >
+              Tambah Anggota
+            </button>
             <button
               className="button-insert w-[15rem]"
               onClick={() => {
@@ -319,6 +302,17 @@ function TablePBISprint(props) {
           </div>
         </>
       )}
+      <ModalAddAnggota
+        open={isAddAnggota}
+        setOpen={() => {
+          setIsAddAnggota(false);
+        }}
+        idSprint={props.idSprint}
+        dataSprint={props.dataSprint}
+        data={props.dataAnggota}
+        dataUser={props.dataUser}
+        getData={props.getDataAnggota}
+      />
       <ModalAddPBISprint
         open={isAddData}
         setOpen={() => setIsAddData(false)}
@@ -477,7 +471,6 @@ function TablePBISprint(props) {
               id: props.idSprint,
               idPbi: selectedId,
               idPbiProduct: selectedData.PBIProduct[0].id,
-              openAnggota: openAnggota,
               dataPbi: selectedData,
             }}
           />

@@ -8,7 +8,10 @@ import "dayjs/locale/id";
 import { DatePicker, Space } from "antd";
 import { RiDeleteBack2Fill } from "react-icons/ri";
 import { MdOutlinePlaylistAdd } from "react-icons/md";
+
 import { Link } from "react-router-dom";
+import { MdDeleteOutline } from "react-icons/md";
+
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -23,7 +26,6 @@ import ModalPeriksaGambar from "../../CapaianDod/modalPeriksaGambar";
 import TableCapaian from "../../CapaianDod/tableCapaian";
 import ModalEditCapaian from "../../CapaianDod/modalEditCapaian";
 import { FaUserGroup } from "react-icons/fa6";
-import { MdDeleteOutline } from "react-icons/md";
 import { AnimatePresence, motion } from "framer-motion";
 
 import ModalAddAnggota from "../anggotaSprint/modalAnggota";
@@ -340,22 +342,15 @@ function TableDodSprint(props) {
               </div>
             </div>
             <div className="flex justify-end gap-6 items-center">
-              <button
+              {/* <button
                 className="button-insert w-[15rem]"
                 onClick={() => {
                   setIsAddData(!isAddData);
                 }}
               >
                 Dod Pribadi
-              </button>
-              <button
-                className="button-insert w-[15rem]"
-                onClick={() => {
-                  props.openAnggota();
-                }}
-              >
-                Tambah Anggota
-              </button>
+              </button> */}
+
               <button
                 className="button-insert w-[15rem]"
                 onClick={() => {
@@ -485,9 +480,9 @@ function TableDodSprint(props) {
           ) : (
             <>
               <motion.div
-                initial={{ y: 1000 }}
-                animate={{ y: 0 }}
-                transition={{ type: "spring", duration: 2 }}
+                initial={{ y: 1000, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ type: "spring", duration: 2, delay: 0.3 }}
               >
                 <AnimatePresence>
                   {currentData.map((data) => (
@@ -604,54 +599,55 @@ function TableDodSprint(props) {
           </div>
         </>
       )}
-      {isCek == true && isCapaian == true && (
-        <>
-          <TableCapaian
-            dataCapaian={dataCapaianUpdate}
-            dataSelected={dataSelected}
-            handleCekGambar={handleCekGambar}
-            handleDelete={handleDelete}
-            getData={getDataCapaian}
-            dataUpdate={(data) => {
-              setDataCapaianUpdate(data);
-            }}
-            setDataCapaian={(data) => {
-              setDataCapaian(data);
-            }}
-            setCek={() => setIsCek(true)}
-            setTotalCapaian={(value) => {
-              setTotalCapaian(value);
-            }}
-            setDisplay={() => setIsdisplay(false)}
-            handleEdit={handleUpdateCapaian}
-            editData={editData}
-          />
-        </>
-      )}
-      {isCekDisplay == true && isCapaian == true && (
-        <>
-          <TableCapaian
-            dataCapaian={dataCapaian}
-            dataSelected={dataSelected}
-            handleCekGambar={handleCekGambar}
-            handleDelete={handleDelete}
-            getData={getDataCapaian}
-            editData={editData}
-            setCek={() => setIsCek(true)}
-            setDisplay={() => setIsdisplay(false)}
-            dataUpdate={(data) => {
-              setDataCapaianUpdate(data);
-            }}
-            setTotalCapaian={(value) => {
-              setTotalCapaian(value);
-            }}
-            setDataCapaian={(data) => {
-              setDataCapaian(data);
-            }}
-            handleEdit={handleUpdateCapaian}
-          />
-        </>
-      )}
+        {isCek == true && isCapaian == true && (
+          <>
+            <TableCapaian
+              dataCapaian={dataCapaianUpdate}
+              dataSelected={dataSelected}
+              handleCekGambar={handleCekGambar}
+              handleDelete={handleDelete}
+              getData={getDataCapaian}
+              dataUpdate={(data) => {
+                setDataCapaianUpdate(data);
+              }}
+              setDataCapaian={(data) => {
+                setDataCapaian(data);
+              }}
+              setCek={() => setIsCek(true)}
+              setTotalCapaian={(value) => {
+                setTotalCapaian(value);
+              }}
+              setDisplay={() => setIsdisplay(false)}
+              handleEdit={handleUpdateCapaian}
+              editData={editData}
+            />
+          </>
+        )}
+        {isCekDisplay == true && isCapaian == true && (
+          <>
+            <TableCapaian
+              dataCapaian={dataCapaian}
+              dataSelected={dataSelected}
+              handleCekGambar={handleCekGambar}
+              handleDelete={handleDelete}
+              getData={getDataCapaian}
+              editData={editData}
+              setCek={() => setIsCek(true)}
+              setDisplay={() => setIsdisplay(false)}
+              dataUpdate={(data) => {
+                setDataCapaianUpdate(data);
+              }}
+              setTotalCapaian={(value) => {
+                setTotalCapaian(value);
+              }}
+              setDataCapaian={(data) => {
+                setDataCapaian(data);
+              }}
+              handleEdit={handleUpdateCapaian}
+            />
+          </>
+        )}
+    
     </div>
   );
 }

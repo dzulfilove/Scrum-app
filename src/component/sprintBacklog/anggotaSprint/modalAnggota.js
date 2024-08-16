@@ -21,11 +21,9 @@ export default function ModalAddAnggota(props) {
     props.setOpen(false);
   };
   const [data, setData] = useState([]);
-  const [dataUser, setDataUser] = useState([]);
 
   useEffect(() => {
     AOS.init({ duration: 700 });
-    getDataUser();
   }, []);
 
   const handleAdd = async (user) => {
@@ -45,7 +43,7 @@ export default function ModalAddAnggota(props) {
 
       const response = await axios({
         method: "PATCH",
-        url: `http://202.157.189.177:8080/api/database/rows/table/577/${props.idPbi}/?user_field_names=true`,
+        url: `http://202.157.189.177:8080/api/database/rows/table/575/${props.idSprint}/?user_field_names=true`,
         headers: {
           Authorization: "Token wFcCXiNy1euYho73dBGwkPhjjTdODzv6",
           "Content-Type": "application/json",
@@ -112,7 +110,7 @@ export default function ModalAddAnggota(props) {
       if (result.isConfirmed) {
         const response = await axios({
           method: "PATCH",
-          url: `http://202.157.189.177:8080/api/database/rows/table/577/${props.idPbi}/?user_field_names=true`,
+          url: `http://202.157.189.177:8080/api/database/rows/table/575/${props.idSprint}/?user_field_names=true`,
           headers: {
             Authorization: "Token wFcCXiNy1euYho73dBGwkPhjjTdODzv6",
             "Content-Type": "application/json",
@@ -156,68 +154,8 @@ export default function ModalAddAnggota(props) {
       }
     }
   };
+  console.log(props.dataUser, "option User Anggota");
 
-  const getDataUser = async () => {
-    try {
-      const tim = await getSingleDataTim();
-      const filters = [
-        {
-          type: "link_row_has",
-          field: "Tim",
-          value: `${tim.id}`,
-        },
-      ];
-      const param = await Filter(filters);
-      const response = await axios({
-        method: "GET",
-        url:
-          "http://202.157.189.177:8080/api/database/rows/table/717/?" + param,
-        headers: {
-          Authorization: "Token wFcCXiNy1euYho73dBGwkPhjjTdODzv6",
-        },
-      });
-      console.log(response.data.results, "user");
-      const data = response.data.results;
-
-      const dataOption = data.map((item) => {
-        return {
-          value: item.id,
-          text: item.Nama,
-        };
-      });
-      console.log(props.dataPbi, "user Tim");
-      setDataUser(dataOption);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const getSingleDataTim = async (id) => {
-    try {
-      const filters = [
-        {
-          type: "equal",
-          field: "Name",
-          value: `${props.dataPbi.Tim[0].value}`,
-        },
-      ];
-      const param = await Filter(filters);
-      const response = await axios({
-        method: "GET",
-        url:
-          "http://202.157.189.177:8080/api/database/rows/table/273/?" + param,
-        headers: {
-          Authorization: "Token wFcCXiNy1euYho73dBGwkPhjjTdODzv6",
-        },
-      });
-      console.log(response.data.results, "user");
-      const data = response.data.results;
-
-      return data[0];
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
   return (
     <Dialog open={props.open} onClose={setOpen} className="relative z-10">
       <DialogBackdrop
@@ -239,14 +177,15 @@ export default function ModalAddAnggota(props) {
                       as="h3"
                       className="text-xl font-semibold leading-6 text-white w-[95%]  py-3 mt-8 rounded-xl bg-blue-600 "
                     >
-                      Tambah Data Dod Sprint
+                      Tambah Anggota Sprint
                     </DialogTitle>
                   </div>
                   <div className=" px-4">
                     <FormAddAnggota
                       addData={handleAdd}
-                      optionUser={dataUser}
+                      optionUser={props.dataUser}
                       data={props.data}
+                      open={props.open}
                       delete={handleDelete}
                     />
                   </div>
