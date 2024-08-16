@@ -8,6 +8,7 @@ import "dayjs/locale/id";
 import { DatePicker, Space } from "antd";
 import { LuArrowRight } from "react-icons/lu";
 import { RiDeleteBack2Fill } from "react-icons/ri";
+import { AnimatePresence, motion } from "framer-motion";
 
 import { Link } from "react-router-dom";
 import DropdownSearch from "../../features/dropdown";
@@ -280,8 +281,8 @@ function TablePBISprint(props) {
   };
   return (
     <div
-      //   data-aos="fade-down"
-      //   data-aos-delay="450"
+      data-aos="fade-down"
+      data-aos-delay="450"
       className="  w-full rounded-xl  mb-16 mt-10"
     >
       {isOpen == false && (
@@ -396,50 +397,58 @@ function TablePBISprint(props) {
                 Aksi
               </div>
             </div>
-            <div className=" bg-white shadow-md flex flex-col justify-start items-center w-full rounded-xl  p-2 mt-5">
-              {currentData.map((data) => (
-                <div
-                  key={data.id}
-                  className="hover:cursor-pointer py-4 px-4  gap-4 w-full text-sm  border-b border-blue-blue-300 flex justify-between items-center"
-                >
-                  <div className="font-normal flex justify-start items-center w-[15%]">
-                    {data.Judul[0].value}
-                  </div>
-                  <div className="font-normal flex justify-start items-center w-[15%]">
-                    {data.Bobot}
-                  </div>
-                  <div className="font-normal flex justify-start items-center w-[15%]">
-                    {data.Capaian}
-                  </div>
-                  <div className="font-normal flex justify-start items-center w-[15%]">
-                    {data.PersentaseCapaian}%
-                  </div>
-                  <div className="font-normal flex justify-end items-center w-[40%] gap-4">
-                    <button
-                      className="button-table border border-teal-500 bg-teal-500  hover:border-teal-700"
-                      onClick={() => editData(data)}
+            <motion.div
+              initial={{ y: 1000, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ type: "spring", duration: 2, delay: 0.3 }}
+            >
+              <AnimatePresence>
+                <div className=" bg-white shadow-md flex flex-col justify-start items-center w-full rounded-xl  p-2 mt-5">
+                  {currentData.map((data) => (
+                    <div
+                      key={data.id}
+                      className="hover:cursor-pointer py-4 px-4  gap-4 w-full text-sm  border-b border-blue-blue-300 flex justify-between items-center"
                     >
-                      <span>Update</span>
-                    </button>
-                    <button
-                      className="button-table  border border-red-500 bg-red-500  hover:border-red-700"
-                      onClick={() => handleDelete(data.id)}
-                    >
-                      <span>Hapus</span>
-                    </button>
-                    <button
-                      onClick={() => handleItemClick(data)}
-                      className="cssbuttons-io-button w-[13rem]"
-                    >
-                      Lihat Dod Sprint
-                      <div class="icon">
-                        <LuArrowRight className="text-xl text-blue-600" />
+                      <div className="font-normal flex justify-start items-center w-[15%]">
+                        {data.Judul[0].value}
                       </div>
-                    </button>
-                  </div>
+                      <div className="font-normal flex justify-start items-center w-[15%]">
+                        {data.Bobot}
+                      </div>
+                      <div className="font-normal flex justify-start items-center w-[15%]">
+                        {data.Capaian}
+                      </div>
+                      <div className="font-normal flex justify-start items-center w-[15%]">
+                        {data.PersentaseCapaian}%
+                      </div>
+                      <div className="font-normal flex justify-end items-center w-[40%] gap-4">
+                        <button
+                          className="button-table border border-teal-500 bg-teal-500  hover:border-teal-700"
+                          onClick={() => editData(data)}
+                        >
+                          <span>Update</span>
+                        </button>
+                        <button
+                          className="button-table  border border-red-500 bg-red-500  hover:border-red-700"
+                          onClick={() => handleDelete(data.id)}
+                        >
+                          <span>Hapus</span>
+                        </button>
+                        <button
+                          onClick={() => handleItemClick(data)}
+                          className="cssbuttons-io-button w-[13rem]"
+                        >
+                          Lihat Dod Sprint
+                          <div class="icon">
+                            <LuArrowRight className="text-xl text-blue-600" />
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </AnimatePresence>
+            </motion.div>
           </div>
           <div className="mt-10 flex justify-start w-full bg-white rounded-xl py-2 px-4 shadow-md">
             {Array.from(

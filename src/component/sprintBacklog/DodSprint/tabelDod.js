@@ -24,6 +24,8 @@ import TableCapaian from "../../CapaianDod/tableCapaian";
 import ModalEditCapaian from "../../CapaianDod/modalEditCapaian";
 import { FaUserGroup } from "react-icons/fa6";
 import { MdDeleteOutline } from "react-icons/md";
+import { AnimatePresence, motion } from "framer-motion";
+
 import ModalAddAnggota from "../anggotaSprint/modalAnggota";
 const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY", "DD-MM-YYYY", "DD-MM-YY"];
 
@@ -424,7 +426,7 @@ function TableDodSprint(props) {
         }}
       />
       <div
-        data-aos="fade-up"
+        // data-aos="fade-up"
         className="w-full text-left text-sm font-normal mt-5"
       >
         <div className="bg-blue-600 text-white rounded-xl font-normal py-4 px-6 grid grid-cols-5 gap-4">
@@ -433,6 +435,7 @@ function TableDodSprint(props) {
           <div className="font-medium">Capaian</div>
           <div className="font-medium">Aksi</div>
         </div>
+
         <div className=" bg-white shadow-md flex flex-col justify-start items-center w-full rounded-xl  p-2 mt-5">
           {isCapaian ? (
             <>
@@ -481,92 +484,100 @@ function TableDodSprint(props) {
             </>
           ) : (
             <>
-              {currentData.map((data) => (
-                <div
-                  data-aos="fade-up"
-                  key={data.id}
-                  className="hover:cursor-pointer py-1 px-4 grid grid-cols-5 gap-4 w-full items-center  border-b border-blue-blue-300 bg-white"
-                >
-                  <div>{data.Judul[0].value}</div>
-                  <div>
-                    {data.Target} {data.Satuan[0].value}
-                  </div>
-                  <div>
-                    {data.Capaian} {data.Satuan[0].value}
-                  </div>
-                  <div className="flex gap-6 w-[25rem]">
-                    <div class="group relative">
-                      <button
-                        onClick={() => props.setDod(data)}
-                        className="w-[2.5rem] h-[2.5rem] duration-300 transition-all flex justify-center items-center rounded-full border hover:border-blue-600 hover:scale-125 bg-blue-100 "
-                      >
-                        <FaUserGroup class="text-lg  duration-200 text-blue-700" />
-                      </button>
-                      <span
-                        class="absolute -top-10 left-[50%] -translate-x-[50%] 
+              <motion.div
+                initial={{ y: 1000 }}
+                animate={{ y: 0 }}
+                transition={{ type: "spring", duration: 2 }}
+              >
+                <AnimatePresence>
+                  {currentData.map((data) => (
+                    <div
+                      // data-aos="fade-up"
+                      key={data.id}
+                      className="hover:cursor-pointer py-1 px-4 grid grid-cols-5 gap-4 w-full items-center  border-b border-blue-blue-300 bg-white"
+                    >
+                      <div>{data.Judul[0].value}</div>
+                      <div>
+                        {data.Target} {data.Satuan[0].value}
+                      </div>
+                      <div>
+                        {data.Capaian} {data.Satuan[0].value}
+                      </div>
+                      <div className="flex gap-6 w-[25rem]">
+                        <div class="group relative">
+                          <button
+                            onClick={() => props.setDod(data)}
+                            className="w-[2.5rem] h-[2.5rem] duration-300 transition-all flex justify-center items-center rounded-full border hover:border-blue-600 hover:scale-125 bg-blue-100 "
+                          >
+                            <FaUserGroup class="text-lg  duration-200 text-blue-700" />
+                          </button>
+                          <span
+                            class="absolute -top-10 left-[50%] -translate-x-[50%] 
   z-20 origin-left scale-0 px-3 rounded-lg border 
   border-gray-300 bg-blue-600 text-white py-2 text-xs font-semibold
   shadow-md transition-all duration-300 ease-in-out 
   group-hover:scale-100"
-                      >
-                        Pelaksana<span></span>
-                      </span>
-                    </div>
-                    <div class="group relative">
-                      <button
-                        onClick={() => editData(data)}
-                        className="w-[2.5rem] h-[2.5rem] duration-300 transition-all flex justify-center items-center rounded-full border hover:border-teal-600 hover:scale-125 bg-teal-100 "
-                      >
-                        <HiOutlinePencilSquare class="text-lg  duration-200 text-teal-700" />
-                      </button>
-                      <span
-                        class="absolute -top-10 left-[50%] -translate-x-[50%] 
+                          >
+                            Pelaksana<span></span>
+                          </span>
+                        </div>
+                        <div class="group relative">
+                          <button
+                            onClick={() => editData(data)}
+                            className="w-[2.5rem] h-[2.5rem] duration-300 transition-all flex justify-center items-center rounded-full border hover:border-teal-600 hover:scale-125 bg-teal-100 "
+                          >
+                            <HiOutlinePencilSquare class="text-lg  duration-200 text-teal-700" />
+                          </button>
+                          <span
+                            class="absolute -top-10 left-[50%] -translate-x-[50%] 
   z-20 origin-left scale-0 px-3 rounded-lg border 
   border-gray-300 bg-teal-600 text-white py-2 text-xs font-semibold
   shadow-md transition-all duration-300 ease-in-out 
   group-hover:scale-100"
-                      >
-                        Update<span></span>
-                      </span>
-                    </div>
+                          >
+                            Update<span></span>
+                          </span>
+                        </div>
 
-                    <div class="group relative">
-                      <button
-                        onClick={() => handleDelete(data.id)}
-                        className="w-[2.5rem] h-[2.5rem] duration-300 transition-all flex justify-center items-center rounded-full border hover:border-red-600 hover:scale-125 bg-red-100 "
-                      >
-                        <MdDeleteOutline class="text-lg  duration-200 text-red-700" />
-                      </button>
-                      <span
-                        class="absolute -top-10 left-[50%] -translate-x-[50%] 
+                        <div class="group relative">
+                          <button
+                            onClick={() => handleDelete(data.id)}
+                            className="w-[2.5rem] h-[2.5rem] duration-300 transition-all flex justify-center items-center rounded-full border hover:border-red-600 hover:scale-125 bg-red-100 "
+                          >
+                            <MdDeleteOutline class="text-lg  duration-200 text-red-700" />
+                          </button>
+                          <span
+                            class="absolute -top-10 left-[50%] -translate-x-[50%] 
   z-20 origin-left scale-0 px-3 rounded-lg border 
   border-gray-300 bg-red-600 text-white py-2 text-xs font-semibold
   shadow-md transition-all duration-300 ease-in-out 
   group-hover:scale-100"
-                      >
-                        Hapus<span></span>
-                      </span>
-                    </div>
-                    <div class="group relative">
-                      <button
-                        onClick={() => handleCapaian(data)}
-                        className="w-[2.5rem] h-[2.5rem] duration-300 transition-all flex justify-center items-center rounded-full border hover:border-blue-600 hover:scale-125 bg-blue-100 "
-                      >
-                        <FaArrowUpRightDots class="text-lg  duration-200 text-blue-700" />
-                      </button>
-                      <span
-                        class="absolute -top-10 left-[50%] -translate-x-[50%] 
+                          >
+                            Hapus<span></span>
+                          </span>
+                        </div>
+                        <div class="group relative">
+                          <button
+                            onClick={() => handleCapaian(data)}
+                            className="w-[2.5rem] h-[2.5rem] duration-300 transition-all flex justify-center items-center rounded-full border hover:border-blue-600 hover:scale-125 bg-blue-100 "
+                          >
+                            <FaArrowUpRightDots class="text-lg  duration-200 text-blue-700" />
+                          </button>
+                          <span
+                            class="absolute -top-10 left-[50%] -translate-x-[50%] 
   z-20 origin-left scale-0 px-3 rounded-lg border 
   border-gray-300 bg-blue-600 text-white py-2 text-xs font-semibold
   shadow-md transition-all duration-300 ease-in-out 
   group-hover:scale-100"
-                      >
-                        Capaian<span></span>
-                      </span>
+                          >
+                            Capaian<span></span>
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ))}
+                  ))}
+                </AnimatePresence>
+              </motion.div>
             </>
           )}
         </div>

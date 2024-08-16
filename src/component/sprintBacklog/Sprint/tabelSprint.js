@@ -10,6 +10,7 @@ import { MdKeyboardArrowRight } from "react-icons/md";
 import { Link } from "react-router-dom";
 import DropdownSearch from "../../features/dropdown";
 import { GoArrowUpRight } from "react-icons/go";
+import { AnimatePresence, motion } from "framer-motion";
 
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -399,42 +400,50 @@ function TableSprint(props) {
           <div className="font-medium">Capaian</div>
           <div className="font-medium">Aksi</div>
         </div>
-        <div className="bg-white shadow-md flex flex-col justify-start items-center w-full rounded-xl p-2 mt-5">
-          {currentData.map((data) => (
-            <div
-              key={data.id}
-              className="hover:cursor-pointer py-4 px-4 grid grid-cols-[2fr_2fr_1fr_1fr_3fr] gap-4 w-full items-center border-b border-blue-blue-300"
-            >
-              <div>{data.Judul[0].value}</div>
-              <div>{data.NamaTim[0].value}</div>
-              <div>{data.Bulan[0].value[0].value}</div>
-              <div>{data.CapaianPBI}%</div>
-              <div className="flex gap-6 ">
-                <button
-                  className="button-table border border-teal-500 bg-teal-500 hover:border-teal-700"
-                  onClick={() => editData(data)}
+        <motion.div
+          initial={{ y: 1000 }}
+          animate={{ y: 0 }}
+          transition={{ type: "spring", duration: 2, delay: 0.3 }}
+        >
+          <AnimatePresence>
+            <div className="bg-white shadow-md flex flex-col justify-start items-center w-full rounded-xl p-2 mt-5">
+              {currentData.map((data) => (
+                <div
+                  key={data.id}
+                  className="hover:cursor-pointer py-4 px-4 grid grid-cols-[2fr_2fr_1fr_1fr_3fr] gap-4 w-full items-center border-b border-blue-blue-300"
                 >
-                  <span>Update</span>
-                </button>
-                <button
-                  className="button-table border border-red-500 bg-red-500 hover:border-red-700"
-                  onClick={() => handleDelete(data.id)}
-                >
-                  <span>Hapus</span>
-                </button>
-                <Link
-                  to={`/pbi-sprint/${data.id}/${data.ProductBacklog[0].id}`}
-                  className="cssbuttons-io-button w-[10rem]"
-                >
-                  Lihat Detail
-                  <div class="icon">
-                    <LuArrowRight className="text-xl text-blue-600" />
+                  <div>{data.Judul[0].value}</div>
+                  <div>{data.NamaTim[0].value}</div>
+                  <div>{data.Bulan[0].value[0].value}</div>
+                  <div>{data.CapaianPBI}%</div>
+                  <div className="flex gap-6 ">
+                    <button
+                      className="button-table border border-teal-500 bg-teal-500 hover:border-teal-700"
+                      onClick={() => editData(data)}
+                    >
+                      <span>Update</span>
+                    </button>
+                    <button
+                      className="button-table border border-red-500 bg-red-500 hover:border-red-700"
+                      onClick={() => handleDelete(data.id)}
+                    >
+                      <span>Hapus</span>
+                    </button>
+                    <Link
+                      to={`/pbi-sprint/${data.id}/${data.ProductBacklog[0].id}`}
+                      className="cssbuttons-io-button w-[10rem]"
+                    >
+                      Lihat Detail
+                      <div class="icon">
+                        <LuArrowRight className="text-xl text-blue-600" />
+                      </div>
+                    </Link>
                   </div>
-                </Link>
-              </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </AnimatePresence>
+        </motion.div>
       </div>
 
       <div className="mt-10 flex justify-start w-full bg-white rounded-xl py-2 px-4 shadow-md">
