@@ -430,7 +430,7 @@ function TablePBISprint(props) {
               </div>
             </div>
 
-            <div className="w-full   mt-7">
+            <div className="w-full  overflow-x-hidden mt-7">
               <ProgressBar
                 bgcolor="#2563EB"
                 progress={parseInt(selectedData.PersentaseCapaian)}

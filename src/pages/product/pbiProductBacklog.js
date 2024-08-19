@@ -217,7 +217,7 @@ function PbiProductBacklog({ params }) {
                 </Link>
               </div>
             </div>
-            <div className="w-full pb-6 px-6">
+            <div className="w-full overflow-x-hidden pb-6 px-6">
               <ProgressBar
                 bgcolor="#2563EB"
                 progress={parseInt(totalCapaian)}
