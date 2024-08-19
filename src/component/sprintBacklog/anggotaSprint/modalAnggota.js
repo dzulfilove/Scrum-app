@@ -16,11 +16,13 @@ import FormAddAnggota from "./formAddAnggota";
 import Filter from "../../features/filter";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { useLoading } from "../../features/context/loadContext";
 export default function ModalAddAnggota(props) {
   const setOpen = () => {
     props.setOpen(false);
   };
   const [data, setData] = useState([]);
+  const { setIsLoad } = useLoading();
 
   useEffect(() => {
     AOS.init({ duration: 700 });
@@ -28,37 +30,45 @@ export default function ModalAddAnggota(props) {
 
   const handleAdd = async (user) => {
     try {
-      // Validate the data
       if (!user.value) {
-        console.error("Invalid data: All fields are required.");
+        Swal.fire({
+          icon: "error",
+          title: "Data Tidak Valid",
+          text: "Field user wajib diisi!",
+        });
         return;
+      } else {
+        setIsLoad(true);
+        const updateData = props.data.map((a) => parseInt(a.id));
+        updateData.push(parseInt(user.value));
+
+        const data = {
+          AnggotaSprint: updateData,
+        };
+        console.log(data, "Data being Update");
+
+        const response = await axios({
+          method: "PATCH",
+          url: `http://202.157.189.177:8080/api/database/rows/table/575/${props.idSprint}/?user_field_names=true`,
+          headers: {
+            Authorization: "Token wFcCXiNy1euYho73dBGwkPhjjTdODzv6",
+            "Content-Type": "application/json",
+          },
+          data: data,
+        });
+        setIsLoad(false);
+
+        props.getData();
+        Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: "Data Berhasil Diupdate.",
+        });
+        console.log("Data successfully saved", response);
       }
-      const updateData = props.data.map((a) => parseInt(a.id));
-      updateData.push(parseInt(user.value));
-
-      const data = {
-        AnggotaSprint: updateData,
-      };
-      console.log(data, "Data being Update");
-
-      const response = await axios({
-        method: "PATCH",
-        url: `http://202.157.189.177:8080/api/database/rows/table/575/${props.idSprint}/?user_field_names=true`,
-        headers: {
-          Authorization: "Token wFcCXiNy1euYho73dBGwkPhjjTdODzv6",
-          "Content-Type": "application/json",
-        },
-        data: data,
-      });
-
-      props.getData();
-      Swal.fire({
-        icon: "success",
-        title: "Success",
-        text: "Data Berhasil Diupdate.",
-      });
-      console.log("Data successfully saved", response);
     } catch (error) {
+      setIsLoad(false);
+
       if (error.response) {
         // The request was made, and the server responded with a status code
         // that falls out of the range of 2xx
@@ -108,6 +118,8 @@ export default function ModalAddAnggota(props) {
       });
 
       if (result.isConfirmed) {
+        setIsLoad(true);
+
         const response = await axios({
           method: "PATCH",
           url: `http://202.157.189.177:8080/api/database/rows/table/575/${props.idSprint}/?user_field_names=true`,
@@ -117,6 +129,7 @@ export default function ModalAddAnggota(props) {
           },
           data: data,
         });
+        setIsLoad(false);
 
         props.getData();
         Swal.fire({
@@ -126,6 +139,8 @@ export default function ModalAddAnggota(props) {
         });
       }
     } catch (error) {
+      setIsLoad(false);
+
       if (error.response) {
         // The request was made, and the server responded with a status code
         // that falls out of the range of 2xx

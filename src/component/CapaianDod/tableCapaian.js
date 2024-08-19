@@ -5,9 +5,14 @@ import Filter from "../features/filter";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { MdDeleteOutline } from "react-icons/md";
-
+import { TbEyeSearch } from "react-icons/tb";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
+import { ImFileText2 } from "react-icons/im";
+import { FaRegCheckCircle } from "react-icons/fa";
+import { useLoading } from "../features/context/loadContext";
 function TableCapaian(props) {
+  const { setIsLoad } = useLoading();
+
   const getDataCapaian = async (item) => {
     console.log(item);
     try {
@@ -56,6 +61,7 @@ function TableCapaian(props) {
       });
 
       if (result.isConfirmed) {
+        setIsLoad(true);
         const response = await axios({
           method: "DELETE",
           url:
@@ -73,6 +79,8 @@ function TableCapaian(props) {
         props.dataUpdate(dataUpdate);
         props.setCek();
         props.setDisplay();
+        setIsLoad(false);
+
         Swal.fire({
           icon: "success",
           title: "Success",
@@ -84,6 +92,8 @@ function TableCapaian(props) {
         });
       }
     } catch (error) {
+      setIsLoad(false);
+
       if (error.response) {
         // The request was made, and the server responded with a status code
         // that falls out of the range of 2xx
@@ -179,26 +189,62 @@ function TableCapaian(props) {
                 <div className="flex justify-end gap-6  w-[35rem]">
                   {data.Link !== "" && (
                     <>
-                      <a
-                        className="button-table  border border-blue-500 bg-blue-500  hover:border-blue-700"
-                        target="_blank"
-                        rel="noreferrer"
-                        href={data.Link}
-                      >
-                        <span>Periksa Bukti</span>
-                      </a>
+                      <div class="group relative">
+                        <a
+                          target="_blank"
+                          rel="noreferrer"
+                          href={data.Link}
+                          className="w-[2.5rem] h-[2.5rem] duration-300 transition-all flex justify-center items-center rounded-full border hover:border-blue-600 hover:scale-125 bg-blue-100 "
+                        >
+                          <TbEyeSearch class="text-lg  duration-200 text-blue-700" />
+                        </a>
+                        <span
+                          class="absolute -top-10 left-[50%] -translate-x-[50%] 
+  z-20 origin-left scale-0 px-3 rounded-lg border w-[6rem]
+  border-gray-300 bg-blue-600 text-white py-2 text-xs font-semibold
+  shadow-md transition-all duration-300 ease-in-out 
+  group-hover:scale-100"
+                        >
+                          <span>Periksa Link</span>
+                        </span>
+                      </div>
                     </>
                   )}
-                  <button
-                    className="button-table  border border-blue-500 bg-blue-500  hover:border-blue-700"
-                    onClick={() => props.handleCekGambar(data)}
-                  >
-                    <span>
-                      {data.Link === ""
-                        ? "Periksa Bukti"
-                        : "Periksa Keterangan"}
+
+                  <div class="group relative">
+                    <button
+                      onClick={() => props.handleCekGambar(data)}
+                      className={`w-[2.5rem] h-[2.5rem] duration-300 transition-all flex justify-center items-center rounded-full border  ${
+                        data.Link === ""
+                          ? "hover:border-blue-600 bg-blue-100 "
+                          : "hover:border-purple-600 bg-purple-100 "
+                      }   hover:scale-125 `}
+                    >
+                      {data.Link == "" ? (
+                        <>
+                          <TbEyeSearch class="text-lg  duration-200 text-blue-700" />
+                        </>
+                      ) : (
+                        <>
+                          <ImFileText2 class="text-lg  duration-200 text-purple-700" />
+                        </>
+                      )}
+                    </button>
+                    <span
+                      class={`absolute -top-10 left-[50%] -translate-x-[50%] 
+  z-20 origin-left scale-0 px-3 rounded-lg border w-[6rem]
+  border-gray-300 ${
+    data.Link === "" ? "bg-blue-600" : "bg-purple-600"
+  }  text-white py-2 text-xs font-semibold
+  shadow-md transition-all duration-300 ease-in-out 
+  group-hover:scale-100`}
+                    >
+                      <span>
+                        {" "}
+                        {data.Link === "" ? "Periksa Bukti" : "Keterangan"}
+                      </span>
                     </span>
-                  </button>
+                  </div>
                   {data.isCheck == false && (
                     <>
                       <div class="group relative">

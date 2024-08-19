@@ -6,7 +6,8 @@ import Filter from "../../component/features/filter";
 import TablePBISprint from "../../component/sprintBacklog/PBISprint/tabelPbiSprint";
 import { Link } from "react-router-dom";
 import { RiDeleteBack2Fill } from "react-icons/ri";
-
+import { IoIosArrowForward } from "react-icons/io";
+import ProgressBar from "../../component/features/progressBar";
 function PbiSprintBacklog({ params }) {
   const [activeTabIndex, setActiveTabIndex] = useState("tab1");
   const [dataTim, setDataTim] = useState([]);
@@ -20,6 +21,7 @@ function PbiSprintBacklog({ params }) {
   const { id, idProduct } = params;
   const [dataUser, setDataUser] = useState([]);
   const [idSprint, setIdSprint] = useState(id);
+  const [totalPbi, setTotalPbi] = useState(0);
   const [idProductBacklog, setIdProduct] = useState(idProduct);
   console.log(params, "param page");
   const allTabs = [
@@ -90,7 +92,7 @@ function PbiSprintBacklog({ params }) {
       const dataPlan = allData.filter((a) => a.Unplan === false);
       const dataUnplan = allData.filter((a) => a.Unplan === true);
       await getSingleDataSprint(idSprint);
-
+      setTotalPbi(allData.length);
       setDataPbiPlan(dataPlan);
       setDataPbiUnPlan(dataUnplan);
     } catch (error) {
@@ -272,6 +274,38 @@ function PbiSprintBacklog({ params }) {
   );
   return (
     <div className="w-full h-full flex flex-col justify-start items-center pb-25">
+           <div className="w-full  h-[3rem] rounded-md flex justify-start items-center bg-white px-6">
+        <Link
+          to={"/sprint-backlog"}
+          className="p-2 flex justify-center items-center text-sm text-slate-500  font-medium"
+        >
+          Sprint Backlog
+        </Link>
+        <IoIosArrowForward className="text-2xl text-slate-500" />
+        <button
+          onClick={() => {
+            setIsOpen(false);
+          }}
+          className={`p-2 flex justify-center items-center text-sm ${
+            isOpen ? "text-slate-500 " : "text-blue-700 "
+          } font-medium`}
+        >
+          PBI Sprint
+        </button>
+        <IoIosArrowForward
+          className={`text-2xl ${
+            isOpen ? "text-slate-500 " : "text-blue-700 "
+          } `}
+        />
+        {isOpen == true && (
+          <>
+            <div className="p-2 flex justify-center items-center text-sm text-blue-700  font-medium">
+              Dod Sprint
+            </div>
+            <IoIosArrowForward className="text-2xl text-blue-700" />
+          </>
+        )}
+      </div>
       <div className="w-full flex justify-start items-center mt-5 bg-gradient-to-r from-[#1D4ED8] to-[#a2bbff] p-4 rounded-md">
         <h3 className="text-white text-base font-medium">PBI SPRINT</h3>
       </div>
@@ -302,6 +336,10 @@ function PbiSprintBacklog({ params }) {
                 </h6>
                 <div className="w-full flex justify-start gap-4 items-center mt-4">
                   <div className="bg-blue-50 rounded-md border border-blue-700 text-blue-700 flex justify-center items-center p-2 text-xs font-medium min-w-[8rem]">
+                    Total PBI : {totalPbi}
+                  </div>
+
+                  <div className="bg-blue-50 rounded-md border border-blue-700 text-blue-700 flex justify-center items-center p-2 text-xs font-medium min-w-[8rem]">
                     Capaian : {dataSprint == null ? "" : persentase + "%"}
                   </div>
 
@@ -324,15 +362,8 @@ function PbiSprintBacklog({ params }) {
               </div>
             </div>
             <div className="w-full pb-6 px-6">
-              <div className="w-full rounded-3xl p-0 flex justify-start items-center  bg-white relative overflow-hidden border border-blue-600">
-                <div
-                  className={`w-[${persentase}%] rounded-3xl  flex justify-center items-center border bg-blue-600 p-4 z-[99] relative`}
-                >
-                  <h4 className="text-blue font-medium text-sm absolute z-[999] text-white">
-                    {dataSprint == null ? 0 : persentase}%
-                  </h4>
-                </div>
-              </div>
+             
+              <ProgressBar bgcolor="#2563EB" progress={persentase} height={30} />
             </div>
           </div>
 
@@ -352,6 +383,7 @@ function PbiSprintBacklog({ params }) {
               width={50}
               data={dataPbiPlan}
               setOpen={(value) => setIsOpen(value)}
+              isOpen={isOpen}
               getData={fetchData}
               dataAnggota={dataAnggota}
               getDataAnggota={getDataAnggota}
@@ -373,6 +405,7 @@ function PbiSprintBacklog({ params }) {
               dataAnggota={dataAnggota}
               dataSprint={dataSprint}
               getDataAnggota={getDataAnggota}
+              isOpen={isOpen}
               data={dataPbiUnPlan}
               getData={fetchData}
               optionProduct={dataProduct}

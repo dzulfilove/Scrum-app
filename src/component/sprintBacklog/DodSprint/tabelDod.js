@@ -29,6 +29,7 @@ import { FaUserGroup } from "react-icons/fa6";
 import { AnimatePresence, motion } from "framer-motion";
 
 import ModalAddAnggota from "../anggotaSprint/modalAnggota";
+import { useLoading } from "../../features/context/loadContext";
 const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY", "DD-MM-YYYY", "DD-MM-YY"];
 
 function TableDodSprint(props) {
@@ -38,6 +39,8 @@ function TableDodSprint(props) {
   const [search, setSearch] = useState("");
 
   const [dataUpdate, setDataUpdate] = useState({});
+
+  const { setIsLoad } = useLoading();
 
   const [idData, setIdData] = useState(0);
   const [isAddData, setIsAddData] = useState(false);
@@ -53,21 +56,44 @@ function TableDodSprint(props) {
   const [dataCapaianUpdate, setDataCapaianUpdate] = useState([]);
   const [dataSelected, setDataSelected] = useState({});
   const [capaianSelected, setCapaianSelected] = useState({});
+  const [searchTerm, setSearchTerm] = useState(""); // State u
   const [totalCapaian, setTotalCapaian] = useState(0);
-  const [filteredData, setFilteredData] = useState(props.data);
+  // Filter data berdasarkan kata kunci pencarian
+  const filteredData = props.data.filter((data) => {
+    return data.Judul[0].value.toLowerCase().includes(searchTerm.toLowerCase());
+  });
   console.log(props.idProduct, "id");
   useEffect(() => {
-    setFilteredData(props.data);
-
     AOS.init({ duration: 700 });
   }, [props.data]);
 
   const indexOfLastData = currentPage * dataPerPage;
   const indexOfFirstData = indexOfLastData - dataPerPage;
-  const currentData = props.data.slice(indexOfFirstData, indexOfLastData);
-
+  const currentData = filteredData.slice(indexOfFirstData, indexOfLastData);
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value); // Update kolom pencarian
+    setCurrentPage(1); // Reset halaman ke halaman pertama setelah pencarian diterapkan
+  };
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  const getSingleDataDod = async () => {
+    alert("data Dod");
+    try {
+      const response = await axios({
+        method: "GET",
+        url: `http://202.157.189.177:8080/api/database/rows/table/578/${dataSelected.id}/?user_field_names=true`,
+        headers: {
+          Authorization: "Token wFcCXiNy1euYho73dBGwkPhjjTdODzv6",
+        },
+      });
+
+      console.log(response.data, "data dod Sprint");
+
+      setDataSelected(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const getDataCapaian = async (item) => {
     console.log(item);
     try {
@@ -90,7 +116,8 @@ function TableDodSprint(props) {
       console.log(response.data.results, "dod");
       const data = response.data.results;
       // Hitung total capaian
-      const totalCapaian = data.reduce((total, item) => {
+      const filterdata = data.filter((a) => a.isCheck == true);
+      const totalCapaian = filterdata.reduce((total, item) => {
         return total + parseInt(item.Capaian || 0); // Asumsikan ada properti `capaian`
       }, 0);
       setTotalCapaian(totalCapaian);
@@ -120,6 +147,7 @@ function TableDodSprint(props) {
       });
 
       if (result.isConfirmed) {
+        setIsLoad(true);
         const response = await axios({
           method: "DELETE",
           url:
@@ -130,6 +158,7 @@ function TableDodSprint(props) {
             Authorization: "Token wFcCXiNy1euYho73dBGwkPhjjTdODzv6",
           },
         });
+        setIsLoad(false);
 
         props.getData();
         Swal.fire({
@@ -139,6 +168,8 @@ function TableDodSprint(props) {
         });
       }
     } catch (error) {
+      setIsLoad(false);
+
       if (error.response) {
         // The request was made, and the server responded with a status code
         // that falls out of the range of 2xx
@@ -171,38 +202,47 @@ function TableDodSprint(props) {
     try {
       // Validate the data
       if (!dod.value || !target) {
-        console.error("Invalid data: All fields are required.");
+        Swal.fire({
+          icon: "error",
+          title: "Data Tidak Valid",
+          text: "Semua field wajib diisi!",
+        });
         return;
+      } else {
+        setIsLoad(true);
+
+        const data = {
+          Target: target,
+          DodProduct: [parseInt(dod.value)], // Ensure this is an array
+          PBISprint: [parseInt(props.idPbi)], // Ensure this is an array
+          Sprint: [parseInt(props.idSprint)], // Ensure this is an array
+        };
+
+        console.log(data, "Data being sent");
+
+        const response = await axios({
+          method: "POST",
+          url: "http://202.157.189.177:8080/api/database/rows/table/578/?user_field_names=true",
+          headers: {
+            Authorization: "Token wFcCXiNy1euYho73dBGwkPhjjTdODzv6",
+            "Content-Type": "application/json",
+          },
+          data: data,
+        });
+        setIsLoad(false);
+
+        props.getData();
+        Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: "Data successfully saved.",
+        });
+        console.log("Data successfully saved", response);
+        setIsAddData(false);
       }
-
-      const data = {
-        Target: target,
-        DodProduct: [parseInt(dod.value)], // Ensure this is an array
-        PBISprint: [parseInt(props.idPbi)], // Ensure this is an array
-        Sprint: [parseInt(props.idSprint)], // Ensure this is an array
-      };
-
-      console.log(data, "Data being sent");
-
-      const response = await axios({
-        method: "POST",
-        url: "http://202.157.189.177:8080/api/database/rows/table/578/?user_field_names=true",
-        headers: {
-          Authorization: "Token wFcCXiNy1euYho73dBGwkPhjjTdODzv6",
-          "Content-Type": "application/json",
-        },
-        data: data,
-      });
-
-      props.getData();
-      Swal.fire({
-        icon: "success",
-        title: "Success",
-        text: "Data successfully saved.",
-      });
-      console.log("Data successfully saved", response);
-      setIsAddData(false);
     } catch (error) {
+      setIsLoad(false);
+
       if (error.response) {
         // The request was made, and the server responded with a status code
         // that falls out of the range of 2xx
@@ -243,38 +283,47 @@ function TableDodSprint(props) {
     try {
       // Validate the data
       if (!dod.value || !target) {
-        console.error("Invalid data: All fields are required.");
+        Swal.fire({
+          icon: "error",
+          title: "Data Tidak Valid",
+          text: "Semua field wajib diisi!",
+        });
         return;
+      } else {
+        setIsLoad(true);
+
+        const data = {
+          Target: target,
+          DodProduct: [parseInt(dod.value)], // Ensure this is an array
+          PBISprint: [parseInt(props.idPbi)], // Ensure this is an array
+          Sprint: [parseInt(props.idSprint)], // Ensure this is an array
+        };
+
+        console.log(data, "Data being Update");
+
+        const response = await axios({
+          method: "PATCH",
+          url: `http://202.157.189.177:8080/api/database/rows/table/578/${idData}/?user_field_names=true`,
+          headers: {
+            Authorization: "Token wFcCXiNy1euYho73dBGwkPhjjTdODzv6",
+            "Content-Type": "application/json",
+          },
+          data: data,
+        });
+        setIsLoad(false);
+
+        props.getData();
+        Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: "Data Berhasil Diupdate.",
+        });
+        console.log("Data successfully saved", response);
+        setIsEditData(false);
       }
-
-      const data = {
-        Target: target,
-        DodProduct: [parseInt(dod.value)], // Ensure this is an array
-        PBISprint: [parseInt(props.idPbi)], // Ensure this is an array
-        Sprint: [parseInt(props.idSprint)], // Ensure this is an array
-      };
-
-      console.log(data, "Data being Update");
-
-      const response = await axios({
-        method: "PATCH",
-        url: `http://202.157.189.177:8080/api/database/rows/table/578/${idData}/?user_field_names=true`,
-        headers: {
-          Authorization: "Token wFcCXiNy1euYho73dBGwkPhjjTdODzv6",
-          "Content-Type": "application/json",
-        },
-        data: data,
-      });
-
-      props.getData();
-      Swal.fire({
-        icon: "success",
-        title: "Success",
-        text: "Data Berhasil Diupdate.",
-      });
-      console.log("Data successfully saved", response);
-      setIsEditData(false);
     } catch (error) {
+      setIsLoad(false);
+
       if (error.response) {
         // The request was made, and the server responded with a status code
         // that falls out of the range of 2xx
@@ -331,13 +380,15 @@ function TableDodSprint(props) {
       {isCapaian == false && (
         <>
           <div className="w-full flex justify-between items-center rounded-xl bg-white py-2 px-5 shadow-md gap-6">
-            <div className="flex justify-start items-center gap-10 w-[20rem]">
-              <div class="input-wrapper">
+            <div className="flex justify-start items-center gap-10 w-[25rem]">
+              <div className="input-wrapper">
                 <input
                   type="text"
                   placeholder="Cari..."
                   name="text"
-                  class="input"
+                  className="input border p-2 rounded-lg w-full"
+                  value={searchTerm}
+                  onChange={handleSearchChange}
                 />
               </div>
             </div>
@@ -401,6 +452,10 @@ function TableDodSprint(props) {
         open={isCekGambar}
         dataDodSprint={dataSelected}
         getData={getDataCapaian}
+        getDataPBI={() => {
+          props.getDataPBI();
+        }}
+        getDataDod={getSingleDataDod}
         setOpen={() => setIsCekGambar(false)}
         setCek={() => setIsCek(true)}
         setIsDisplay={() => {
@@ -599,55 +654,54 @@ function TableDodSprint(props) {
           </div>
         </>
       )}
-        {isCek == true && isCapaian == true && (
-          <>
-            <TableCapaian
-              dataCapaian={dataCapaianUpdate}
-              dataSelected={dataSelected}
-              handleCekGambar={handleCekGambar}
-              handleDelete={handleDelete}
-              getData={getDataCapaian}
-              dataUpdate={(data) => {
-                setDataCapaianUpdate(data);
-              }}
-              setDataCapaian={(data) => {
-                setDataCapaian(data);
-              }}
-              setCek={() => setIsCek(true)}
-              setTotalCapaian={(value) => {
-                setTotalCapaian(value);
-              }}
-              setDisplay={() => setIsdisplay(false)}
-              handleEdit={handleUpdateCapaian}
-              editData={editData}
-            />
-          </>
-        )}
-        {isCekDisplay == true && isCapaian == true && (
-          <>
-            <TableCapaian
-              dataCapaian={dataCapaian}
-              dataSelected={dataSelected}
-              handleCekGambar={handleCekGambar}
-              handleDelete={handleDelete}
-              getData={getDataCapaian}
-              editData={editData}
-              setCek={() => setIsCek(true)}
-              setDisplay={() => setIsdisplay(false)}
-              dataUpdate={(data) => {
-                setDataCapaianUpdate(data);
-              }}
-              setTotalCapaian={(value) => {
-                setTotalCapaian(value);
-              }}
-              setDataCapaian={(data) => {
-                setDataCapaian(data);
-              }}
-              handleEdit={handleUpdateCapaian}
-            />
-          </>
-        )}
-    
+      {isCek == true && isCapaian == true && (
+        <>
+          <TableCapaian
+            dataCapaian={dataCapaianUpdate}
+            dataSelected={dataSelected}
+            handleCekGambar={handleCekGambar}
+            handleDelete={handleDelete}
+            getData={getDataCapaian}
+            dataUpdate={(data) => {
+              setDataCapaianUpdate(data);
+            }}
+            setDataCapaian={(data) => {
+              setDataCapaian(data);
+            }}
+            setCek={() => setIsCek(true)}
+            setTotalCapaian={(value) => {
+              setTotalCapaian(value);
+            }}
+            setDisplay={() => setIsdisplay(false)}
+            handleEdit={handleUpdateCapaian}
+            editData={editData}
+          />
+        </>
+      )}
+      {isCekDisplay == true && isCapaian == true && (
+        <>
+          <TableCapaian
+            dataCapaian={dataCapaian}
+            dataSelected={dataSelected}
+            handleCekGambar={handleCekGambar}
+            handleDelete={handleDelete}
+            getData={getDataCapaian}
+            editData={editData}
+            setCek={() => setIsCek(true)}
+            setDisplay={() => setIsdisplay(false)}
+            dataUpdate={(data) => {
+              setDataCapaianUpdate(data);
+            }}
+            setTotalCapaian={(value) => {
+              setTotalCapaian(value);
+            }}
+            setDataCapaian={(data) => {
+              setDataCapaian(data);
+            }}
+            handleEdit={handleUpdateCapaian}
+          />
+        </>
+      )}
     </div>
   );
 }

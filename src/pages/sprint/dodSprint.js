@@ -129,9 +129,6 @@ function DodSprint({ params }) {
     }
   };
 
-  const closeAnggota = () => {
-    params.closeAnggota();
-  };
   const openPelaksana = (data) => {
     setIsAddPelaksana(true);
     setSelectedDod(data);
@@ -144,7 +141,7 @@ function DodSprint({ params }) {
       className="w-full h-full flex flex-col justify-start items-center pb-25"
     >
       <div className="w-full flex justify-start items-center mt-5 bg-gradient-to-r from-[#1D4ED8] to-[#a2bbff] p-4 rounded-md">
-        <h3 className="text-white text-base font-medium">DOD PRODUCT</h3>
+        <h3 className="text-white text-base font-medium">DOD SPRINT</h3>
       </div>
 
       <div className="w-full flex justify-between items-center transition-transform duration-500 ease-in-out transform">
@@ -172,6 +169,9 @@ function DodSprint({ params }) {
             }}
             data={data}
             getData={fetchData}
+            getDataPBI={() => {
+              params.getDataPBI();
+            }}
             dataUser={dataPelaksana}
             getDataUser={getDataPelaksana}
             optionDod={dataDodProduct}
